@@ -36,7 +36,11 @@ class PostController extends Controller
      */
     public function store(CreatePostRequest $request)
     {
-        $post = $request->user()->posts()->create( $request->validated() );
+        $data = $request->validated();
+        if( $request->hasFile('image') ){
+            $data['image'] = $request->file('image')->store('post_images','public');
+        }
+        $post = $request->user()->posts()->create( $data );
         // $post = Post::create( $request->validated() );
         return redirect()
             ->route( 'posts.show', $post )
@@ -67,7 +71,11 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, Post $post)
     {
         // Gate::authorize( 'update', $post );
-        $post->update( $request->validated() );
+        $data = $request->validated();
+        if( $request->hasFile('image') ){
+            $data['image'] = $request->file('image')->store('post_images','public');
+        }
+        $post->update( $data );
         return redirect()->route( 'posts.show', $post )
             ->with( 'success', 'این پست همین الان آپدیت شد!' );
     }

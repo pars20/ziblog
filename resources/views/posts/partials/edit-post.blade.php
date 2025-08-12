@@ -9,7 +9,8 @@
         </p>
     </header>
 
-    <form method="post" action="{{ route('posts.update', $post) }}" class="mt-6 space-y-6">
+    <form method="post" enctype="multipart/form-data"
+        action="{{ route('posts.update', $post) }}" class="mt-6 space-y-6">
         @csrf
         @method('put')
 
@@ -23,6 +24,12 @@
             <x-input-label for="content" :value="__('Content')" />
             <x-text-input id="content" name="content" type="text" class="mt-1 block w-full" :value="old('content', $post->content )" required autocomplete="content" />
             <x-input-error class="mt-2" :messages="$errors->get('content')" />
+        </div>
+
+        <div>
+            <x-input-label for="image" :value="__('Cover Image')" />
+            <input type="file" name="image" id="image" accept="Image/*">
+            <x-input-error class="mt-2" :messages="$errors->get('image')" />
         </div>
 
         <div class="flex items-center gap-4">

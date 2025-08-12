@@ -22,8 +22,9 @@ class CreatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'=>'required|min:5|max:255',
-            'content'=>'required|min:5|max:2000',
+            'title'     =>'required|min:5|max:255',
+            'content'   =>'required|min:5|max:2000',
+            'image'     => 'nullable|image|mimes:jpg,png,jpeg|max:2048', // Max 2MB
         ];
     }
 
@@ -31,8 +32,9 @@ class CreatePostRequest extends FormRequest
     public function attributes()
     {
         return [
-            'title' => 'Post Title',
-            'content' => 'Post Content',
+            'title'     => 'Post Title',
+            'content'   => 'Post Content',
+            'image'     => 'Post Cover',
         ];  
     }
 }

@@ -22,6 +22,12 @@
                         <h3 class="text-lg font-bold">
                             <a href="{{ route('posts.show', $post) }}">{{ $post->title }}</a>
                         </h3>
+
+                        @if ($post->image)
+                            <img src="{{ asset('storage/' . $post->image) }}" 
+                                alt="Cover image for {{ $post->title }}">
+                        @endif
+
                         <p>
                             {{ $post->content }}
                         </p>
