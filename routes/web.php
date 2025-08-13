@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -13,8 +14,7 @@ Route::prefix('posts')->name('posts.')->group(function(){
     Route::get('/{post}', [PostController::class, 'show'] )->name('show');
 });
 
-
-
+Route::get('tag/{tag}', [ TagController::class, 'show' ])->name('tags.show');
 
 Route::get('/', function () {
     return view('welcome');

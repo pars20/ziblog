@@ -34,6 +34,15 @@
                         <p class="text-sm text-gray-600">
                             By {{ $post->user->name }}
                         </p>
+
+                        @if( $post->tags )
+                            <div class="tags">
+                                @foreach( $post->tags as $tag )
+                                    <a href="">{{ $tag->name }}</a>
+                                @endforeach
+                            </div>
+                        @endif
+
                     </div>
 
                 </div>

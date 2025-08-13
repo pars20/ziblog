@@ -19,10 +19,11 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with( 'user' )
+        $posts = Post::with( ['user','tags'] )
             //->orderBy( 'created_at', 'desc' )
             ->latest()
-            ->get();
+            ->paginate(5);
+            //->get();
         return view( 'posts.index', compact('posts') );
     }
 
@@ -57,7 +58,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $post->load( 'user' );
+        $post->load( ['user','tags'] );
         return view( 'posts.show', compact('post') );
     }
 

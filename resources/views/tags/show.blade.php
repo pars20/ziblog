@@ -3,7 +3,7 @@
     {{-- This part goes into the layout's named "header" slot --}}
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('All Blog Posts') }}
+            {{ __('Tag : ' . $tag->name ) }}
         </h2>
     </x-slot>
 
@@ -13,15 +13,6 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
 
-                    @if (session('success'))
-                        <div class="alert alert-success mb-4">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-
-                    <div>
-                        <a href='{{ route('posts.create') }}'><h3>Create new post</h3></a>
-                    </div>
 
                     <hr>
 
