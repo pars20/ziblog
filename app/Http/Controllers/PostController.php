@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Spatie\Image\Image;
+use Spatie\Image\Enums\Fit;
+
 use App\Http\Requests\CreatePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
@@ -105,23 +108,37 @@ class PostController extends Controller
         if( !$request->hasFile('image') ) return null;
 
         // If an old image exists for this post, delete it first.
-        if ($post->image) {
+        if ($post->image  && Storage::disk('public')->exists($post->image) ) {
             Storage::disk('public')->delete( $post->image );
         }
         
         $file = $request->file('image');
-        $extension = $file->getClientOriginalExtension();
+        $extension = 'webp'; // $file->getClientOriginalExtension();
         $filename = $post->slug.".$extension";
         $path = "post-images";
+        $fullPath = "$path/$filename";
         $counter = 1;
-        while( Storage::disk('public')->exists("$path/$filename") ){
+        while( Storage::disk('public')->exists( $fullPath ) ){
             $filename = $post->slug ."-$counter.$extension";
+            $fullPath = "$path/$filename";
             $counter++;
         }
-        $imagePath = $file->storeAs($path,$filename,'public');
-        //$post->image = $imagePath;
-        //$post->save();
-        return $imagePath;
+
+        $image = Image::useImageDriver( 'gd' )
+            ->loadFile( $file->getRealPath() );
+        if ($image->getWidth() > 500 || $image->getHeight() > 500) {
+            $image->fit(Fit::Contain, 500, 500);
+        }
+        $image->save(Storage::disk('public')->path($fullPath));
+        //->fit( Fit::Contain, 500, 500 )
+        //->save( Storage::disk('public')->path( $fullPath ) );
+
+        return $fullPath;
+
+        // $imagePath = $file->storeAs($path,$filename,'public');
+        // $post->image = $imagePath;
+        // $post->save();
+        // return $imagePath;
         
     }
     
