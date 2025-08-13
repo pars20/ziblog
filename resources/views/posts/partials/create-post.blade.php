@@ -26,6 +26,15 @@
         </div>
 
         <div>
+            <label for="tags">Tags</label><br>
+            <select name="tags[]" id="tags" multiple>
+                @foreach ($tags as $tag)
+                    <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div>
             <x-input-label for="image" :value="__('Cover Image')" />
             <input type="file" name="image" id="image" accept="Image/*">
             <x-input-error class="mt-2" :messages="$errors->get('image')" />

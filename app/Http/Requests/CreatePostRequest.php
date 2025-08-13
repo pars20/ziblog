@@ -25,6 +25,9 @@ class CreatePostRequest extends FormRequest
             'title'     =>'required|min:5|max:255',
             'content'   =>'required|min:5|max:2000',
             'image'     => 'nullable|image|mimes:jpg,png,jpeg|max:2048', // Max 2MB
+
+            'tags' => 'nullable|array', // The 'tags' field is optional and must be an array
+            'tags.*' => 'exists:tags,id' // Every item in the 'tags' array must exist in the 'id' column of the 'tags' table
         ];
     }
 
@@ -35,6 +38,7 @@ class CreatePostRequest extends FormRequest
             'title'     => 'Post Title',
             'content'   => 'Post Content',
             'image'     => 'Post Cover',
+            'tags'      => 'Post Tags',
         ];  
     }
 }

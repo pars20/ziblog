@@ -38,7 +38,7 @@
                         @if( $post->tags )
                             <div class="tags">
                                 @foreach( $post->tags as $tag )
-                                    <a href="">{{ $tag->name }}</a>
+                                    <a href="{{ route('tags.show', $tag) }}">{{ $tag->name }}</a>
                                 @endforeach
                             </div>
                         @endif

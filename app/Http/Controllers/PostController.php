@@ -8,8 +8,9 @@ use Spatie\Image\Enums\Fit;
 use App\Http\Requests\CreatePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
+use App\Models\Tag;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Http\Request;
+// use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -33,7 +34,8 @@ class PostController extends Controller
     public function create()
     {
         Gate::authorize( 'create', Post::class );
-        return view( 'posts.create' );
+        $tags = Tag::all();
+        return view( 'posts.create', compact('tags') );
     }
 
     /**
@@ -47,6 +49,8 @@ class PostController extends Controller
             $post->image = $postCover;
             $post->save();
         }
+
+        $post->tags()->sync( $request->input('tags',[]) );
 
         return redirect()
             ->route( 'posts.show', $post )
@@ -68,7 +72,9 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         Gate::authorize( 'update', $post );
-        return view( 'posts.edit', compact('post') );
+        $tags = Tag::all();
+        $postTagIds = $post->tags->pluck('id')->toArray();
+        return view( 'posts.edit', compact('post','tags', 'postTagIds') );
     }
 
     /**
@@ -80,6 +86,8 @@ class PostController extends Controller
         $postCover = $this->savePostCover( $request, $post );
         if( $postCover ) $data['image'] = $postCover;
         $post->update( $data );
+
+        $post->tags()->sync( $request->input('tags',[]) );
 
         return redirect()->route( 'posts.show', $post )
             ->with( 'success', 'این پست همین الان آپدیت شد!' );
