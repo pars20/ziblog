@@ -44,9 +44,47 @@
                         @endif
 
                     </div>
-
                 </div>
             </div>
+
+            @if( $comments )
+            <br>
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                @forelse( $comments as $comment )
+                    <div class="post-item mb-4">
+                    <p>from: {{ $comment->user->name }}</p>
+                    <p>{{ $comment->body }}</p>
+                    <small>{{ $comment->created_at->diffForHumans() }}</small>
+                    </div>
+                @empty
+                    منتظر اولین کامنت هستیم!
+                @endforelse
+                </div>
+            </div>
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    {{ $comments->links() }}
+                </div>
+            </div>
+            @endif
+
+            
+            @if( Auth::user() )
+            <br>
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <form method="POST" action="{{ route('posts.comments.store', $post ) }}">
+                        @csrf
+                        <textarea name="body" placeholder="Comment"></textarea>
+                        <br>
+                        <input type="submit" value="Send comment">
+                    </form>
+                </div>
+            </div>
+            @endif
+
+
         </div>
     </div>
 </x-app-layout>

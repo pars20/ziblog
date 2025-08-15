@@ -3,6 +3,7 @@
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -13,6 +14,11 @@ Route::prefix('posts')->name('posts.')->group(function(){
     Route::get('/', [PostController::class, 'index'] )->name('index');
     Route::get('/{post}', [PostController::class, 'show'] )->name('show');
 });
+
+Route::post('/{post}/comments', [CommentController::class, 'store'] )
+    ->name('posts.comments.store')
+    ->middleware('auth');
+    
 
 Route::get('tag/{tag}', [ TagController::class, 'show' ])->name('tags.show');
 

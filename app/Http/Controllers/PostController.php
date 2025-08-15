@@ -62,8 +62,12 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $post->load( ['user','tags'] );
-        return view( 'posts.show', compact('post') );
+        $post->load( ['user','tags',//'comments','comments.user'
+            //'comments' => function($query){ $query->latest()->with('user'); },
+        ] );
+        $comments = $post->comments()
+            ->latest()->with('user')->paginate(2);
+        return view( 'posts.show', compact('post','comments') );
     }
 
     /**
