@@ -7,6 +7,7 @@ use Spatie\Image\Enums\Fit;
 
 use App\Http\Requests\CreatePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Jobs\LogPostCreation;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Gate;
@@ -51,6 +52,8 @@ class PostController extends Controller
         }
 
         $post->tags()->sync( $request->input('tags',[]) );
+
+        LogPostCreation::dispatch( $post );
 
         return redirect()
             ->route( 'posts.show', $post )
