@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class Post extends Model
@@ -38,6 +39,20 @@ class Post extends Model
             $post->slug = $slug;
 
         });
+
+        static::saved(
+            function( Post $post ){
+                Cache::tags(['posts'])->flush();
+                Cache::forget("show_post_".$post->slug);
+            }
+        );
+        static::deleted(
+            function ( Post $post ){
+                Cache::tags(['posts'])->flush();
+                Cache::forget("show_post_".$post->slug);
+            }
+        );
+
     }
 
     public function user(){

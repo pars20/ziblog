@@ -10,6 +10,7 @@ use App\Http\Requests\UpdatePostRequest;
 use App\Jobs\LogPostCreation;
 use App\Models\Post;
 use App\Models\Tag;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 // use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -21,11 +22,13 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with( ['user','tags'] )
-            //->orderBy( 'created_at', 'desc' )
-            ->latest()
-            ->paginate(5);
-            //->get();
+        $posts = Cache::tags(['posts'])
+            ->remember('posts_all', 3600, function(){
+                return Post::with( ['user','tags'] )
+                //->orderBy( 'created_at', 'desc' )
+                ->latest()
+                ->paginate(5);
+            });
         return view( 'posts.index', compact('posts') );
     }
 
@@ -35,7 +38,10 @@ class PostController extends Controller
     public function create()
     {
         Gate::authorize( 'create', Post::class );
-        $tags = Tag::all();
+        // $tags = Tag::all();
+        $tags = Cache::remember( 'tags_all', 60*60*24, function(){
+            return Tag::all();
+        } );
         return view( 'posts.create', compact('tags') );
     }
 
@@ -65,9 +71,12 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $post->load( ['user','tags',//'comments','comments.user'
-            //'comments' => function($query){ $query->latest()->with('user'); },
-        ] );
+        // $post->load( ['user','tags',//'comments','comments.user'
+        //     //'comments' => function($query){ $query->latest()->with('user'); },
+        // ] );
+        // $post = Cache::remember( "show_post_".$post->id, 3600, function() use ($post){
+        //     return $post->load(['user','tags']);
+        // } );
         $comments = $post->comments()
             ->latest()->with('user')->paginate(2);
         return view( 'posts.show', compact('post','comments') );
@@ -79,7 +88,10 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         Gate::authorize( 'update', $post );
-        $tags = Tag::all();
+        // $tags = Tag::all();
+        $tags = Cache::remember( 'tags_all', 60*60*24, function(){
+            return Tag::all();
+        } );
         $postTagIds = $post->tags->pluck('id')->toArray();
         return view( 'posts.edit', compact('post','tags', 'postTagIds') );
     }

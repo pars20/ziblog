@@ -6,6 +6,14 @@ use App\Http\Controllers\TagController;
 use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 
+Route::resource('tags', TagController::class)
+    ->except(['index','show'])
+    ->middleware('auth');
+Route::prefix('tags')->name('tags.')->group(function(){
+    Route::get('/', [TagController::class, 'index'] )->name('index');
+    Route::get('/{tag}', [TagController::class, 'show'] )->name('show');
+});
+
 
 Route::resource('posts', PostController::class)
     ->except(['index','show'])
