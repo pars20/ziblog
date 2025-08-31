@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Models\Post;
+use App\Models\Tag;
 
 test('A Guest cannot visit the Create post page', function () {
     $response = $this->get( route('posts.create') );
@@ -114,4 +115,33 @@ test('User Can Not Edit other users post', function(){
 });
 
 
+
+
+test('create a post with tag', function(){
+    $user = User::factory()->create();
+    $tags = Tag::factory( 3 )->create();
+
+    $postData = [
+        'title' => 'A new post with tags',
+        'content' => 'Some great content.',
+        'tags' => $tags->pluck('id')->toArray(), // e.g., [1, 2, 3]
+    ];
+
+    $response = $this->actingAs($user)->post(route('posts.store'), $postData);
+    
+    $response->assertRedirect();
+    
+    $this->assertDatabaseHas('posts', [
+        'title' => 'A new post with tags'
+    ]);
+    
+    $post = Post::latest()->first();
+
+    foreach ($tags as $tag) {
+        $this->assertDatabaseHas('post_tag', [
+            'post_id' => $post->id,
+            'tag_id' => $tag->id,
+        ]);
+    }
+});
 

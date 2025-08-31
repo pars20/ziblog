@@ -30,7 +30,8 @@ class AppServiceProvider extends ServiceProvider
         // Event::listen( UserRegistered::class, SendWelcomeEmail::class );
 
         Route::bind( 'post', function( $val ){
-            return Cache::remember( "show_post_".$val, 3600, function() use ($val){
+            return Cache::remember( "show_post_".$val, 3600, 
+            function() use ($val){
                 return Post::where( 'slug', $val )
                     ->with( ['user','tags'] )
                     ->firstOrFail();
